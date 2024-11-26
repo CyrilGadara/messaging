@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Apply for Job | Job Messenger</title>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="/css/stylesv2.css" />
+    </head>
+    <body>
+        <script>
+            const path = window.location.pathname;
+
+            // Split the path into segments
+            const segments = path.split("/");
+
+            // Assuming the URL is structured like `/apply/:campaignid/:contactid`
+            const campaignid = segments[2]; // The 3rd part of the path (index 2)
+            const contactid = segments[3]; // The 4th part of the path (index 3)
+            console.log(campaignid, contactid);
+
+            fetch(`/apply/${campaignid}/${contactid}/apply`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (!data.success) {
+                        location.href = "/apply/thank-you";
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+        </script>
+        <header class="primary-header">
+            <div class="header-container" style="justify-content: center">
+                <img
+                    src="https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png"
+                    alt="247 Hire Logo"
+                    class="logo"
+                />
+            </div>
+        </header>
+        <div class="small-container">
+            <form class="form-card" id="applicationForm">
+                <!-- Personalized Greeting -->
+                <h1 class="page-title" style="margin-bottom: 1rem">Hi <%= contact.name %>,</h1>
+                <p style="margin-bottom: 2rem; font-size: 1rem">
+                    Thank you for your interest in the role of <strong><%= campaign.job_role %></strong> at
+                    <strong><%= campaign.company_name %></strong>. We would like to gather some additional details to proceed with your application.
+                </p>
+
+                <!-- Current Job Status -->
+                <div class="form-group">
+                    <label for="jobStatus">Your Current Job Status*</label>
+                    <select id="jobStatus" name="jobStatus" required>
+                        <option value="">Select your status</option>
+                        <option value="Employed">Employed</option>
+                        <option value="Unemployed">Unemployed</option>
+                    </select>
+                    <div class="error-message" id="jobStatusError"></div>
+                </div>
+
+                <!-- Expected Salary -->
+                <div class="form-group">
+                    <label for="expectedSalary">Your Expected Salary*</label>
+                    <input type="number" id="expectedSalary" name="expectedSalary" placeholder="Enter expected salary" required />
+                    <div class="error-message" id="expectedSalaryError"></div>
+                </div>
+
+                <!-- Notice Period -->
+                <div class="form-group">
+                    <label for="noticePeriod">Your Notice Period / Availability to Join*</label>
+                    <input type="text" id="noticePeriod" name="noticePeriod" placeholder="e.g., 2 weeks, Immediate" required />
+                    <div class="error-message" id="noticePeriodError"></div>
+                </div>
+
+                <!-- Additional Details -->
+                <div class="form-group">
+                    <label for="additionalDetails">Any Additional Details You'd Like to Share (Optional)</label>
+                    <textarea id="additionalDetails" name="additionalDetails" placeholder="Enter any other important details"></textarea>
+                    <div class="error-message" id="additionalDetailsError"></div>
+                </div>
+
+                <!-- Resume Upload -->
+                <!-- <div class="form-group">
+                    <label for="resume">Upload Your Resume*</label>
+                    <div class="file-upload" id="resumeUpload">
+                        <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required />
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">Drop your resume here or click to browse</div>
+                        <div class="upload-hint">Supported formats: .pdf, .doc, .docx</div>
+                    </div>
+                    <div class="error-message" id="resumeError"></div>
+                </div> -->
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Submitting your application...</p>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">Submit Application</button>
+            </form>
+        </div>
+
+        <script>
+            const resumeUpload = document.getElementById("resumeUpload");
+            const resumeInput = document.getElementById("resume");
+
+            // Update file upload text when file is selected
+            resumeInput?.addEventListener("change", function (e) {
+                if (!this.files[0].name.match(/\.(pdf|doc|docx)$/)) {
+                    document.getElementById("resumeError").textContent = "Please upload a valid resume file";
+                    document.getElementById("resumeError").style.display = "block";
+                    return;
+                } else {
+                    document.getElementById("resumeError").style.display = "none";
+                }
+
+                if (this.files.length > 0) {
+                    const fileName = this.files[0].name;
+                    resumeUpload.querySelector(".upload-text").textContent = `Selected: ${fileName}`;
+                }
+            });
+
+            // Handle form submission
+            document.getElementById("applicationForm").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const path = window.location.pathname;
+
+                // Split the path into segments
+                const segments = path.split("/");
+
+                // Assuming the URL is structured like `/apply/:campaignid/:contactid`
+                const campaignid = segments[2]; // The 3rd part of the path (index 2)
+                const contactid = segments[3]; // The 4th part of the path (index 3)
+
+                // Log the extracted IDs
+                console.log("Campaign ID:", campaignid);
+                console.log("Contact ID:", contactid);
+                // Clear previous errors
+                document.querySelectorAll(".error-message").forEach((el) => {
+                    el.style.display = "none";
+                });
+
+                const formData = new FormData(e.target);
+
+                try {
+                    document.getElementById("loading").style.display = "block";
+                    document.getElementById("submitBtn").style.display = "none";
+
+                    const response = await fetch(`/apply/${campaignid}/${contactid}/submit`, {
+                        method: "POST",
+                        body: JSON.stringify(Object.fromEntries(formData)),
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+
+                    const data = await response.json();
+                    console.log(data);
+                    if (!data.success) {
+                        if (data.errors) {
+                            data.errors.forEach((error) => {
+                                const errorElement = document.getElementById(`${error.path}Error`);
+                                if (errorElement) {
+                                    errorElement.textContent = error.msg;
+                                    errorElement.style.display = "block";
+                                }
+                            });
+                        }
+                        return;
+                    }
+
+                    // Show success message or redirect
+                    alert("Application submitted successfully!");
+                    // window.location.href = `/apply/thank-you`;
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Failed to submit your application. Please try again.");
+                } finally {
+                    document.getElementById("loading").style.display = "none";
+                    document.getElementById("submitBtn").style.display = "block";
+                }
+            });
+        </script>
+    </body>
+</html>

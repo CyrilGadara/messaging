@@ -1,0 +1,186 @@
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* border: 1px solid red; */
+}
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    background-color: #fff;
+}
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+.error-message {
+    color: #f44336;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.success-message {
+    background-color: #dff0d8;
+    border: 1px solid #d6e9c6;
+    color: #3c763d;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Base styles */
+.form-element {
+    width: 100%;
+    margin: 0 auto;
+    padding-top: 16px;
+}
+
+.form-element:first-of-type {
+    padding-top: 8px;
+}
+
+/* Form input group - common styles */
+.form-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
+/* Common input styles - reduces repetition */
+.form-input-group input,
+.form-input-group select,
+.form-input-group textarea {
+    width: 100%;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #000;
+}
+
+/* Label base styles */
+.form-input-group label {
+    position: absolute;
+    padding: 8px;
+    margin: 0;
+    top: 50%;
+    left: 8px;
+    line-height: 0;
+    font-size: 15px;
+    white-space: nowrap; /* Fixed typo: no-wrap → nowrap */
+    transform: translateY(-50%);
+    transition: transform 0.3s ease, top 0.3s ease, font-size 0.3s ease; /* Specific transitions instead of 'all' */
+    pointer-events: none;
+}
+
+/* Specific component styles */
+.form-input-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-input-group textarea + label {
+    top: 20px;
+}
+
+/* Select specific styles */
+.form-input-group select {
+    appearance: none;
+    padding-right: 2.5rem;
+    background: #fff
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M10.293 3.293 6 7.586 1.707 3.293A1 1 0 0 0 .293 4.707l5 5a1 1 0 0 0 1.414 0l5-5a1 1 0 1 0-1.414-1.414z' fill='%23000000'/%3E%3C/svg%3E")
+        no-repeat right 1rem center;
+}
+
+/* Focus states - consolidated */
+.form-input-group input:focus,
+.form-input-group select:focus,
+.form-input-group textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 1px blue;
+}
+
+/* Label animation states */
+.form-input-group input:focus + label,
+.form-input-group input:not(:placeholder-shown) + label,
+.form-input-group select:focus + label,
+.form-input-group select:not(:invalid) + label,
+.form-input-group textarea:focus + label,
+.form-input-group textarea:not(:placeholder-shown) + label {
+    top: 0;
+    font-size: 12px;
+    background-color: #fff;
+}
+
+/* Error states */
+.form-response-message:not(:empty) {
+    padding: 4px 4px 0;
+    font-size: 12px;
+    color: #f44336;
+}
+
+.form-input-group.error label {
+    color: #b3261e;
+}
+
+.form-input-group.error input,
+.form-input-group.error select,
+.form-input-group.error textarea,
+.form-input-group.error input[type="file"] + label {
+    border-color: #b3261e;
+}
+
+.form-input-group.error input:focus,
+.form-input-group.error select:focus,
+.form-input-group.error textarea:focus,
+.form-input-group.error input[type="file"]:focus + label {
+    border: 2px solid #b3261e;
+}

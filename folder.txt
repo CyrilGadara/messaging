@@ -1,0 +1,31 @@
+my-project
+├───logs
+├───src
+│   ├───config
+│   │    ├───database.js
+│   │    └───db.js
+│   ├───controllers
+│   ├───middleware
+│   │    └───errorMiddleware.js
+│   ├───migrations
+│   ├───models
+│   ├───public
+│   │   ├───css
+│   │   ├───images
+│   │   └───js
+│   ├───routes
+│   │    ├───pages.js
+│   ├───seeds
+│   ├───services
+│   ├───utils
+│   │    ├───logger.js
+│   └───views
+│       ├───layouts
+│       └───partials
+├───tests    
+│    ├───integration
+│    └───unit
+├───.env
+├───.gitignore
+├───package.json
+└───server.js

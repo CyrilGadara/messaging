@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Edit User | Job Messenger</title>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="/css/stylesv2.css" />
+    </head>
+    <body>
+        <header class="primary-header">
+            <div class="header-container">
+                <img
+                    src="https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png"
+                    alt="247 Hire Logo"
+                    class="logo"
+                />
+                <nav>
+                    <a href="/campaigns">My Campaigns</a>
+                    <% if(user.role === 'admin') {%>
+                    <a href="/users">Users</a>
+                    <%}%>
+                    <a href="/auth/logout" class="logout-btn">Logout</a>
+                </nav>
+            </div>
+        </header>
+    
+        <div class="small-container">
+            <a href="/users" class="back-link">← Back to Users</a>
+
+            <form class="form-card" id="editUserForm" data-user-id="<%= userData.id %>" data-user-name="<%= userData.username %>">
+                <h1 class="page-title" style="margin-bottom: 0.5rem">Edit User</h1>
+                <p class="page-subtitle">Update user information and permissions</p>
+
+                <div class="success-message" id="successMessage">Changes saved successfully!</div>
+
+                <div class="form-sections">
+                    <div class="form-section">
+                        <h2 class="section-title">Basic Information</h2>
+                        <div class="form-group">
+                            <label for="name">User Name*</label>
+                            <input type="text" id="name" name="name" value="<%= userData.username%>" required />
+                            <div class="error-message" id="nameError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address*</label>
+                            <input type="email" id="email" name="email" value="<%= userData.email %>" required />
+                            <p class="input-hint">User will use this email to login</p>
+                            <div class="error-message" id="emailError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2 class="section-title">Access Control</h2>
+                        <div class="form-group">
+                            <label for="role">User Role*</label>
+                            <select id="role" name="role" required>
+                                <option value="" disabled>Select a role</option>
+                                <option value="admin" <%= userData.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                                <option value="user" <%= userData.role === 'user' ? 'selected' : '' %>>User</option>
+                            </select>
+                            <div class="error-message" id="roleError"></div>
+                            <p class="input-hint">Admins have full access to all features</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status">Account Status*</label>
+                            <select id="status" name="status" required>
+                                <option value="active" <%= userData.status ? 'selected' : '' %>>Active</option>
+                                <option value="inactive" <%= !userData.status ? 'selected' : '' %>>Inactive</option>
+                            </select>
+                            <div class="error-message" id="statusError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2 class="section-title">Security</h2>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" />
+                            <div class="error-message" id="newPasswordError"></div>
+                            <p class="input-hint">Leave blank to keep current password</p>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="danger-zone">
+                            <h3 class="danger-zone-title">Danger Zone</h3>
+                            <p class="danger-zone-text">This action cannot be undone. Please be certain.</p>
+                            <button type="button" class="delete-btn" id="deleteUserBtn">Delete User Account</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="loading" id="loading" style="margin-top: 16px;">
+                    <div class="spinner"></div>
+                    <p>Updating user...</p>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal" id="deleteModal">
+            <div class="modal-content">
+                <div class="success-message" style="margin-bottom: 0;" id="modalSuccessMessage">User deleted successfully</div>
+                <div class="post-error-message" style="margin-bottom: 0;" id="modalErrorMessage">Something went wrong! Try again later</div>
+                <div id="modal-main-content">
+                    <h2 class="modal-title">Are you sure?</h2>
+                    <p class="modal-description">
+                    You are about to delete the user "<span id="userToDelete"><%= userData.username %></span>". Please enter the username below and click "Delete User" to confirm your action.
+                    </p>
+                
+                    <!-- Input for username -->
+                    <input type="text" id="usernameInput" class="input-field" placeholder="Enter username" />
+            
+                    <div class="modal-actions">
+                        <button class="cancel-btn" id="cancelBtn">Cancel</button>
+                        <button class="confirm-btn" id="confirmDeleteBtn" disabled>Delete User</button>
+                    </div>
+                </div>
+            </div>
+          </div>
+        <script src="/js/edit-user.js"></script>
+    </body>
+</html>
+
+
+                        <!-- <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="forcePasswordChange" name="forcePasswordChange" />
+                                <label for="forcePasswordChange">Require password change on next login</label>
+                            </div>
+                        </div> -->

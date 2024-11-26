@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Campaign Overview | Job Messenger</title>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="/css/stylesv2.css" />
+    </head>
+    <body>
+        <header class="primary-header">
+            <div class="header-container">
+                <img
+                    src="https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png"
+                    alt="247 Hire Logo"
+                    class="logo"
+                />
+                <nav>
+                    <a href="/campaigns">My Campaigns</a>
+                    <% if(user.role === 'admin') {%>
+                    <a href="/users">Users</a>
+                    <%}%>
+                    <a href="/auth/logout" class="logout-btn">Logout</a>
+                </nav>
+            </div>
+        </header>
+
+        <nav class="secondary-header">
+            <div class="nav-container">
+                <a href="/campaigns" class="back-link">← Back to Campaigns</a>
+                <div class="nav-tabs">
+                    <a href="/campaigns/<%= campaign.id %>/overview" class="nav-link active">Overview</a>
+                    <a href="/campaigns/<%= campaign.id %>/contacts" class="nav-link">Contacts</a>
+                    <a href="/campaigns/<%= campaign.id %>/applications" class="nav-link">Applications</a>
+                    <!-- <a href="#" class="nav-link">Activities</a> -->
+                </div>
+            </div>
+        </nav>
+        <!-- <pre>
+            <%- JSON.stringify(campaign, null, 2) %>
+        </pre> -->
+        <div class="container">
+            <div class="campaign-header">
+                <div class="header-content">
+                    <div>
+                        <h1 class="campaign-title"><%= campaign.job_role %> - <%= campaign.company_name %></h1>
+                        <div class="campaign-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> <%= campaign.location %></span>
+                            <span><i class="fas fa-briefcase"></i> <%= campaign.job_type %></span>
+                            <span class="status-badge <%= campaign.status %>">
+                                <%= campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1) %>
+                            </span>
+                        </div>
+                    </div>
+                    <% if (campaign.status === 'ready') { %>
+                    <button id="startCampaignBtn" class="action-button" style="padding: 0.75rem 1.5rem">Start Campaign</button>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <h2 class="section-title">Campaign Progress</h2>
+                <div class="progress-bar">
+                    <div
+                        class="progress-fill"
+                        id="progressBar"
+                        style="width: '<%= (campaign.processed_count / campaign.total_recipients * 100) || 0 %>%'"
+                    ></div>
+                </div>
+                <p class="progress-text-container">
+                    <span id="progressText"> <%= campaign.Processed_records %> / <%= campaign.total_records %> messages sent </span>
+                </p>
+            </div>
+
+            <h3 class="stat-heading">WhatsApp</h3>
+            <div class="stats-grid">
+                <div class="stat-card success">
+                    <div class="stat-label">Successfully Sent</div>
+                    <div class="stat-value" id="whatsappSentCount">0</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-value" id="whatsappPendingCount">0</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">Failed</div>
+                    <div class="stat-value" id="whatsappFailedCount">0</div>
+                </div>
+                <!-- <div class="stat-card info">
+                    <div class="stat-label">Responses Received</div>
+                    <div class="stat-value" id="responseCount">45</div>
+                </div> -->
+            </div>
+
+            <h3 class="stat-heading">SMS</h3>
+            <div class="stats-grid">
+                <div class="stat-card success">
+                    <div class="stat-label">Successfully Sent</div>
+                    <div class="stat-value" id="smsSentCount">0</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-value" id="smsPendingCount">0</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">Failed</div>
+                    <div class="stat-value" id="smsFailedCount">0</div>
+                </div>
+                <!-- <div class="stat-card info">
+                    <div class="stat-label">Responses Received</div>
+                    <div class="stat-value" id="responseCount">45</div>
+                </div> -->
+            </div>
+
+            <h3 class="stat-heading">Email</h3>
+            <div class="stats-grid">
+                <div class="stat-card success">
+                    <div class="stat-label">Successfully Sent</div>
+                    <div class="stat-value" id="emailSentCount">0</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-value" id="emailPendingCount">0</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">Failed</div>
+                    <div class="stat-value" id="emailFailedCount">0</div>
+                </div>
+                <!-- <div class="stat-card info">
+                    <div class="stat-label">Responses Received</div>
+                    <div class="stat-value" id="responseCount">45</div>
+                </div> -->
+            </div>
+        </div>
+
+        <script>
+            const campaignId = "<%= campaign.id %>";
+            let updateInterval;
+
+            async function updateStats() {
+                try {
+                    const response = await fetch(`/campaigns/api/${campaignId}/stats`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Update progress
+                        const progress = (data.stats.processed_count / data.stats.total_recipients) * 100;
+                        document.getElementById("progressBar").style.width = `${progress}%`;
+                        document.getElementById(
+                            "progressText"
+                        ).textContent = `${data.stats.processed_count} / ${data.stats.total_recipients} messages sent`;
+
+                        // Update stats whatsapp
+                        document.getElementById("whatsappSentCount").textContent = data.stats.messageCounts.whatsapp_sent || 0;
+                        document.getElementById("whatsappPendingCount").textContent = data.stats.messageCounts.whatsapp_pending || 0;
+                        document.getElementById("whatsappFailedCount").textContent = data.stats.messageCounts.whatsapp_failed || 0;
+                        // document.getElementById("responseCount").textContent = data.stats.messageCounts.responded || 0;
+
+                        // Update stats sms
+                        document.getElementById("smsSentCount").textContent = data.stats.messageCounts.sms_sent;
+                        document.getElementById("smsPendingCount").textContent = data.stats.messageCounts.sms_pending;
+                        document.getElementById("smsFailedCount").textContent = data.stats.messageCounts.sms_failed;
+
+                        // Update status email
+                        document.getElementById("emailSentCount").textContent = data.stats.messageCounts.email_sent;
+                        document.getElementById("emailPendingCount").textContent = data.stats.messageCounts.email_pending;
+                        document.getElementById("emailFailedCount").textContent = data.stats.messageCounts.email_failed;
+
+                        // If campaign is complete, stop polling
+                        if (data.stats.status === "completed" || data.stats.status === "failed") {
+                            clearInterval(updateInterval);
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error updating stats:", error);
+                }
+            }
+
+            // Start campaign button handler
+            const startButton = document.getElementById("startCampaignBtn");
+            if (startButton) {
+                startButton.addEventListener("click", async () => {
+                    try {
+                        startButton.disabled = true;
+                        startButton.textContent = "Starting...";
+
+                        const response = await fetch(`/campaigns/api/${campaignId}/start`, {
+                            method: "POST",
+                        });
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Start polling for updates
+                            updateInterval = setInterval(updateStats, 3000);
+                            // Hide the button
+                            startButton.style.display = "none";
+                        } else {
+                            alert("Failed to start campaign");
+                            startButton.disabled = false;
+                            startButton.textContent = "Start Campaign";
+                        }
+                    } catch (error) {
+                        console.error("Error starting campaign:", error);
+                        startButton.disabled = false;
+                        startButton.textContent = "Start Campaign";
+                    }
+                });
+            }
+
+            // If campaign is in progress, start polling
+            if ("<%= campaign.status %>" === "processing") {
+                updateInterval = setInterval(updateStats, 5000);
+            }
+
+            // Initial stats update
+            updateStats();
+        </script>
+    </body>
+</html>

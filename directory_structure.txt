@@ -1,0 +1,64 @@
+�   .env
+�   .gitignore
+�   directory_structure.txt
+�   folder.txt
+�   knexfile.js
+�   package-lock.json
+�   package.json
+�   server.js
++---logs
++---src
+�   �   app.js
+�   �   
+�   +---config
+�   �       database.js
+�   �       db.js
+�   �       emailConfig.js
+�   �       messagingConfig.js
+�   �       
+�   +---controllers
+�   �       UserController.js
+�   �       
+�   +---middleware
+�   �       authMiddleware.js
+�   �       errorMiddleware.js
+�   �       
+�   +---migrations
+�   �       20241010091821_create_users_table.js
+�   �       
+�   +---models
+�   �       UserModel.js
+�   �       
+�   +---public
+�   �   �   favicon.ico
+�   �   �   
+�   �   +---css
+�   �   �       styles.css
+�   �   �       
+�   �   +---images
+�   �   +---js
+�   �           fileInput.js
+�   �           login.js
+�   �           signup.js
+�   �           
+�   +---routes
+�   �       pages.js
+�   �       userRoutes.js
+�   �       
+�   +---seeds
+�   +---services
+�   �       whatsappService.js
+�   �       
+�   +---utils
+�   �       logger.js
+�   �       
+�   +---views
+�       �   home.ejs
+�       �   login.ejs
+�       �   signup.ejs
+�       �   
+�       +---layouts
+�       +---partials
++---tests
+    +---integration
+    +---unit

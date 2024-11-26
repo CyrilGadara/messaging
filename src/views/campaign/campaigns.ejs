@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>My Campaigns | Job Messenger</title>
+        <link rel="stylesheet" href="/css/stylesv2.css" />
+    </head>
+    <body>
+        <header class="primary-header">
+            <div class="header-container">
+                <img
+                    src="https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png"
+                    alt="247 Hire Logo"
+                    class="logo"
+                />
+                <nav>
+                    <a href="/campaigns" class="active">My Campaigns</a>
+                    <% if(user.role === 'admin') {%>
+                    <a href="/users">Users</a>
+                    <%}%>
+                    <a href="/auth/logout" class="logout-btn">Logout</a>
+                </nav>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="header-actions">
+                <h1 class="page-title">My Campaigns</h1>
+                <a href="/campaigns/create-campaign" class="action-button">+ Create New Campaign</a>
+            </div>
+
+            <% if (campaigns.length > 0) { %> <% campaigns.forEach(campaign => { %>
+            <div class="campaign-card">
+                <div class="campaign-info">
+                    <h3><%= campaign.job_role %> - <%= campaign.company_name %></h3>
+                    <p class="campaign-details"><%= campaign.location %> • <%= campaign.job_type %></p>
+                    <p class="campaign-details">
+                        <%= campaign.total_records %> contacts • Progress: <%= campaign.Processed_records %>/<%= campaign.total_records %> sent
+                    </p>
+                    <span class="status-badge <%= campaign.status %>">
+                        <%= campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1) %>
+                    </span>
+                </div>
+                <div class="campaign-actions">
+                    <% if (campaign.status === 'ready') { %>
+                    <a href="/campaigns/<%= campaign.id %>/overview" class="view-btn">View Campaign</a>
+                    <% } else if (campaign.status === 'processing' || campaign.status === 'completed') { %>
+                    <a href="/campaigns/<%= campaign.id %>/overview" class="view-btn">View Progress</a>
+                    <% } %>
+                </div>
+            </div>
+            <% }) %> <% } else { %>
+            <div class="no-campaigns-message">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" class="no-campaigns-icon">
+                    <path
+                        fill="var(--primary-color)"
+                        d="M6 22h12c.178 0 .348-.03.512-.074l-3.759-3.759A4.966 4.966 0 0 1 12 19c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5a4.964 4.964 0 0 1-.833 2.753l3.759 3.759c.044-.164.074-.334.074-.512V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2z"
+                    ></path>
+                    <circle cx="12" cy="14" r="3" fill="var(--primary-color)"></circle>
+                </svg>
+                <p>It looks like there are no campaigns at the moment.</p>
+                <p style="margin-bottom: 1rem">Get started by creating a new campaign.</p>
+                <a href="/campaigns/create-campaign" class="action-button">Create a Campaign</a>
+            </div>
+            <% } %>
+
+            <!-- <div class="campaign-card">
+                <div class="campaign-info">
+                    <h3>Senior Frontend Developer - Google</h3>
+                    <p class="campaign-details">San Francisco, CA • Full-time</p>
+                    <p class="campaign-details">250 contacts • Progress: 125/250 sent</p>
+                    <span class="status-badge processing">Processing</span>
+                </div>
+                <div class="campaign-actions">
+                    <a href="#" class="view-btn">View Progress</a>
+                </div>
+            </div>
+
+            <div class="campaign-card">
+                <div class="campaign-info">
+                    <h3>Product Designer - Apple</h3>
+                    <p class="campaign-details">Cupertino, CA • Full-time</p>
+                    <p class="campaign-details">180 contacts</p>
+                    <span class="status-badge ready">Ready</span>
+                </div>
+                <div class="campaign-actions">
+                    <a href="#" class="view-btn">View Campaign</a>
+                </div>
+            </div>
+
+            <div class="campaign-card">
+                <div class="campaign-info">
+                    <h3>Software Engineer - Microsoft</h3>
+                    <p class="campaign-details">Redmond, WA • Full-time</p>
+                    <p class="campaign-details">200 contacts • All messages sent</p>
+                    <span class="status-badge completed">Completed</span>
+                </div>
+                <div class="campaign-actions">
+                    <a href="#" class="view-btn">View Results</a>
+                </div>
+            </div> -->
+        </div>
+    </body>
+</html>

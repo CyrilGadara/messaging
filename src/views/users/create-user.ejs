@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Create User | Job Messenger</title>
+        <link rel="stylesheet" href="/css/stylesv2.css" />
+    </head>
+    <body>
+        <header class="primary-header">
+            <div class="header-container">
+                <img
+                    src="https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png"
+                    alt="247 Hire Logo"
+                    class="logo"
+                />
+                <nav>
+                    <a href="/campaigns">My Campaigns</a>
+                    <% if(user.role === 'admin') {%>
+                    <a href="/users">Users</a>
+                    <%}%>
+                    <a href="/auth/logout" class="logout-btn">Logout</a>
+                </nav>
+            </div>
+        </header>
+
+        <div class="small-container">
+            <a href="/users" class="back-link">← Back to Users</a>
+            <form class="form-card" id="createUserForm">
+                <h1 class="page-title" style="margin-bottom: 2rem">Create New User</h1>
+
+                <div class="success-message" id="successMessage">User created successfully!</div>
+
+                <div class="form-group">
+                    <label for="username">User Name*</label>
+                    <input type="text" id="username" name="username" required />
+                    <div class="error-message" id="usernameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address*</label>
+                    <input type="email" id="email" name="email" required />
+                    <div class="error-message" id="emailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password*</label>
+                    <input type="password" id="password" name="password" required />
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">User Role*</label>
+                    <select id="role" name="role" required>
+                        <option value="" disabled selected>Select role</option>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
+                    <div class="error-message" id="roleError"></div>
+                </div>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Creating new user...</p>
+                </div>
+                <button type="submit" class="submit-btn">Create User</button>
+            </form>
+        </div>
+
+        <script src="/js/create-user.js"></script>
+    </body>
+</html>

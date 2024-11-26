@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Campaign Applications | Job Messenger</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="/css/stylesv2.css" />
+    </head>
+    <body>
+        <header class="primary-header">
+            <div class="header-container">
+                <img
+                    src="https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png"
+                    alt="247 Hire Logo"
+                    class="logo"
+                />
+                <nav>
+                    <a href="/campaigns">My Campaigns</a>
+                    <% if(user.role === 'admin') {%>
+                    <a href="/users">Users</a>
+                    <%}%>
+                    <a href="/auth/logout" class="logout-btn">Logout</a>
+                </nav>
+            </div>
+        </header>
+
+        <nav class="secondary-header">
+            <div class="nav-container">
+                <a href="/campaigns" class="back-link">← Back to Campaigns</a>
+                <div class="nav-tabs">
+                    <a href="/campaigns/<%= campaign.id %>/overview" class="nav-link">Overview</a>
+                    <a href="/campaigns/<%= campaign.id %>/contacts" class="nav-link">Contacts</a>
+                    <a href="/campaigns/<%= campaign.id %>/applications" class="nav-link active">Applications</a>
+                    <!-- <a href="#" class="nav-link">Activities</a> -->
+                </div>
+            </div>
+        </nav>
+        <!-- <pre>
+            <%- JSON.stringify(campaign, null, 2) %>
+            <%- JSON.stringify(applications, null, 2) %>
+        </pre> -->
+        <div class="container">
+            <div class="campaign-header">
+                <div class="header-content">
+                    <div>
+                        <h1 class="campaign-title"><%= campaign.job_role %> - <%= campaign.company_name %></h1>
+                        <div class="campaign-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> <%= campaign.location %></span>
+                            <span><i class="fas fa-briefcase"></i> <%= campaign.job_type %></span>
+                            <span class="status-badge <%= campaign.status %>">
+                                <%= campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1) %>
+                            </span>
+                        </div>
+                    </div>
+                    <% if (campaign.status === 'ready') { %>
+                    <button id="startCampaignBtn" class="action-button" style="padding: 0.75rem 1.5rem">Start Campaign</button>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="table-section">
+                <div class="search-section">
+                    <input type="text" class="search-box" placeholder="Search contacts..." id="searchInput" />
+                </div>
+
+                <div style="overflow-x: auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Job Status</th>
+                                <th>Expected Salary</th>
+                                <th>Notice Period</th>
+                                <th>Additional Details</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% applications.forEach(application => { %>
+                            <tr>
+                                <td><%= application.name %></td>
+                                <td><%= application.email || '-' %></td>
+                                <td><%= application.phone_number || '-' %></td>
+
+                                <td><%= application.job_status || '-' %></td>
+                                <td>₹<%= application.expected_salary || '-' %></td>
+                                <td><%= application.notice_period || '-' %></td>
+                                <td><%= application.additional_details || '-' %></td>
+                                <td>
+                                    <button
+                                        class="open-chat"
+                                        data-campaign-id="<%= application.campaign_id %>"
+                                        data-contact-id="<%= application.contact_id %>"
+                                        data-name="<%= application.name %>"
+                                        data-phone="<%= application.phone_number %>"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                            <path
+                                                fill-rule="evenodd"
+                                                clip-rule="evenodd"
+                                                d="M18.403 5.633A8.919 8.919 0 0 0 12.053 3c-4.948 0-8.976 4.027-8.978 8.977 0 1.582.413 3.126 1.198 4.488L3 21.116l4.759-1.249a8.981 8.981 0 0 0 4.29 1.093h.004c4.947 0 8.975-4.027 8.977-8.977a8.926 8.926 0 0 0-2.627-6.35m-6.35 13.812h-.003a7.446 7.446 0 0 1-3.798-1.041l-.272-.162-2.824.741.753-2.753-.177-.282a7.448 7.448 0 0 1-1.141-3.971c.002-4.114 3.349-7.461 7.465-7.461a7.413 7.413 0 0 1 5.275 2.188 7.42 7.42 0 0 1 2.183 5.279c-.002 4.114-3.349 7.462-7.461 7.462m4.093-5.589c-.225-.113-1.327-.655-1.533-.73-.205-.075-.354-.112-.504.112s-.58.729-.711.879-.262.168-.486.056-.947-.349-1.804-1.113c-.667-.595-1.117-1.329-1.248-1.554s-.014-.346.099-.458c.101-.1.224-.262.336-.393.112-.131.149-.224.224-.374s.038-.281-.019-.393c-.056-.113-.505-1.217-.692-1.666-.181-.435-.366-.377-.504-.383a9.65 9.65 0 0 0-.429-.008.826.826 0 0 0-.599.28c-.206.225-.785.767-.785 1.871s.804 2.171.916 2.321c.112.15 1.582 2.415 3.832 3.387.536.231.954.369 1.279.473.537.171 1.026.146 1.413.089.431-.064 1.327-.542 1.514-1.066.187-.524.187-.973.131-1.067-.056-.094-.207-.151-.43-.263"
+                                            ></path>
+                                        </svg>
+                                    </button>
+                                </td>
+                                <!-- <td>
+                                    <%= new Date(application.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'
+                                    }) %>
+                                </td> -->
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- <div class="pagination">
+                    <button class="page-button">Previous</button>
+                    <button class="page-button active">1</button>
+                    <button class="page-button">2</button>
+                    <button class="page-button">3</button>
+                    <button class="page-button">Next</button>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-backdrop">
+                <div class="chat-window">
+                    <div class="chat-header">
+                        <h2 class="chat-name">0000 0000</h2>
+                        <p class="chat-phone">0000 0000</p>
+                    </div>
+                    <div class="chat-body">
+                        <p class="sent">
+                            Thank you for sharing your details. Our recruitment team will review your information and get back to you shortly with the
+                            next steps in the hiring process.
+                        </p>
+                        <p class="sent" data-time="10:30 AM">Hello, how are you?</p>
+                        <p class="received" data-time="10:31 AM">I'm good, thank you! What about you?</p>
+                        <p class="sent" data-time="10:32 AM">I'm doing great, thanks for asking!</p>
+                        <p class="received" data-time="10:33 AM">That's good to hear.</p>
+                        <p class="sent" data-time="10:30 AM">Hello, how are you?</p>
+                        <p class="received" data-time="10:31 AM">I'm good, thank you! What about you?</p>
+                        <p class="sent" data-time="10:32 AM">I'm doing great, thanks for asking!</p>
+                        <p class="received" data-time="10:33 AM">That's good to hear.</p>
+                        <p class="sent" data-time="10:30 AM">Hello, how are you?</p>
+                        <p class="received" data-time="10:31 AM">I'm good, thank you! What about you?</p>
+                        <p class="sent" data-time="10:32 AM">I'm doing great, thanks for asking!</p>
+                        <p class="received" data-time="10:33 AM">That's good to hear.</p>
+                        <p class="received" data-time="Nov 25 10:33 AM">This is the last message</p>
+                    </div>
+                    <div class="chat-footer">
+                        <textarea class="chat-input" placeholder="Type a message..."></textarea>
+                        <button class="send-button">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const openChat = document.querySelectorAll(".open-chat");
+            const chatBackdrop = document.querySelector(".chat-backdrop");
+            const chatContainer = document.querySelector(".chat-container");
+            const chatBody = document.querySelector(".chat-body");
+            const chatName = document.querySelector(".chat-name");
+            const chatPhone = document.querySelector(".chat-phone");
+
+            const sendButton = document.querySelector(".chat-footer .send-button");
+            const chatInput = document.querySelector(".chat-footer .chat-input");
+
+            openChat.forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                    const campaignId = btn.dataset.campaignId;
+                    const contactId = btn.dataset.contactId;
+                    const name = btn.dataset.name;
+                    const phone = btn.dataset.phone;
+
+                    chatName.textContent = name;
+                    chatPhone.textContent = "+91" + phone;
+
+                    console.log(campaignId, contactId);
+                    chatContainer.style.display = "block";
+                    scrollToBottom();
+                });
+            });
+
+            chatBackdrop.addEventListener("click", (e) => {
+                console.log(e.target);
+                // chatBackdrop.style.display = "none";
+                if (e.target.classList.contains("chat-backdrop")) {
+                    chatContainer.style.display = "none";
+                }
+            });
+
+            // Function to convert newlines to <br> tags and make links clickable
+            function convertTextToHtml(text) {
+                // Escape HTML to prevent XSS and preserve original text formatting
+                const escapedText = text.replace(/[&<>]/g, (match) => {
+                    const escapeMap = {
+                        "&": "&amp;",
+                        "<": "&lt;",
+                        ">": "&gt;",
+                    };
+                    return escapeMap[match];
+                });
+
+                // Convert newlines to <br> tags
+                let formattedText = escapedText.replace(/\n/g, "<br>");
+
+                // Regex to match URLs and wrap them in <a> tags
+                formattedText = formattedText.replace(/\b((?:https?:\/\/|www\.)[\w.-]+\.[a-zA-Z]{2,}(?:\/[\w.-]*)*(?:\?[^>\s]*)?)\b/gi, (url) => {
+                    // Ensure the URL has a protocol
+                    const cleanUrl = url.startsWith("www.") ? `https://${url}` : url;
+                    return `<a href="${cleanUrl}" target="_blank">${url}</a>`;
+                });
+
+                return formattedText;
+            }
+
+            sendButton.addEventListener("click", (e) => {
+                const messageText = chatInput.value.trim();
+
+                if (messageText !== "") {
+                    const formattedMessage = convertTextToHtml(messageText);
+
+                    const newMessage = document.createElement("p");
+                    newMessage.classList.add("sent");
+                    newMessage.innerHTML = formattedMessage;
+
+                    const currentTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                    newMessage.setAttribute("data-time", currentTime);
+
+                    chatBody.appendChild(newMessage);
+
+                    chatInput.value = "";
+
+                    chatInput.focus();
+
+                    textarea.style.height = `${originalHeight}px`;
+                    textarea.style.overflow = "hidden";
+                }
+            });
+
+            // Simple search functionality
+            const searchInput = document.getElementById("searchInput");
+            const contactRows = document.querySelectorAll(".table tbody tr");
+
+            searchInput.addEventListener("input", (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+
+                contactRows.forEach((row) => {
+                    console.log(row);
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? "" : "none";
+                });
+            });
+
+            // Function to scroll to bottom
+            function scrollToBottom() {
+                console.log("trigger scrolltobottom");
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+
+            // Scroll to bottom when page loads
+            scrollToBottom();
+
+            // Optional: If you want to ensure it scrolls when new messages are added
+            // Create a MutationObserver to watch for new messages
+            const observer = new MutationObserver(scrollToBottom);
+
+            // Configure the observer
+            const config = {
+                childList: true, // Watch for direct children being added or removed
+                subtree: false, // Only watch direct children of chatBody
+            };
+
+            // Start observing the chat body
+            observer.observe(chatBody, config);
+
+            const textarea = document.querySelector(".chat-footer textarea");
+            const lineHeight = parseInt(getComputedStyle(textarea).lineHeight);
+            const originalHeight = 40; // Match the CSS initial height
+
+            textarea.addEventListener("input", function () {
+                // Check if textarea is completely empty
+                if (this.value.trim() === "") {
+                    this.style.height = `${originalHeight}px`;
+                    this.style.overflow = "hidden";
+                    return;
+                }
+
+                // Reset height to default first
+                this.style.height = `${lineHeight}px`;
+
+                // Calculate scroll height
+                const scrollHeight = this.scrollHeight;
+
+                // Define thresholds for line changes
+                const singleLineHeight = lineHeight;
+                const twoLineHeight = lineHeight * 2;
+                const maxHeight = lineHeight * 4;
+
+                // Control height based on content
+                if (scrollHeight <= singleLineHeight) {
+                    // If content fits in one line, keep single line height
+                    this.style.height = `${originalHeight}px`;
+                    this.style.overflow = "hidden";
+                } else if (scrollHeight <= twoLineHeight) {
+                    // If content requires two lines, set two-line height
+                    this.style.height = `${twoLineHeight}px`;
+                    this.style.overflow = "hidden";
+                } else {
+                    // If more than two lines, cap at 4 lines
+                    this.style.height = `${maxHeight}px`;
+                    this.style.overflow = "auto";
+                }
+            });
+        </script>
+    </body>
+</html>

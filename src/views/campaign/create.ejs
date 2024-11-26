@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Create Campaign | Job Messenger</title>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="/css/stylesv2.css" />
+    </head>
+    <body>
+        <header class="primary-header">
+            <div class="header-container">
+                <img
+                    src="https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png"
+                    alt="247 Hire Logo"
+                    class="logo"
+                />
+                <nav>
+                    <a href="/campaigns">My Campaigns</a>
+                    <% if(user.role === 'admin') {%>
+                    <a href="/users">Users</a>
+                    <%}%>
+                    <a href="/auth/logout" class="logout-btn">Logout</a>
+                </nav>
+            </div>
+        </header>
+        <!-- <pre>
+            <%= JSON.stringify(user) %>
+        </pre> -->
+        <div class="small-container">
+            <form class="form-card" id="campaignForm" enctype="multipart/form-data">
+                <h1 class="page-title" style="margin-bottom: 2rem">Create New Campaign</h1>
+
+                <div class="form-group">
+                    <label for="jobRole">Job Role*</label>
+                    <input type="text" id="jobRole" name="jobRole" required />
+                    <div class="error-message" id="jobRoleError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="companyName">Company Name*</label>
+                    <input type="text" id="companyName" name="companyName" required />
+                    <div class="error-message" id="companyNameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location*</label>
+                    <input type="text" id="location" name="location" required />
+                    <div class="error-message" id="locationError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="jobType">Job Type*</label>
+                    <select id="jobType" name="jobType" required>
+                        <option value="">Select job type</option>
+                        <option value="Full-time">Full-time</option>
+                        <option value="Part-time">Part-time</option>
+                        <option value="Contract">Contract</option>
+                        <option value="Freelance">Freelance</option>
+                    </select>
+                    <div class="error-message" id="jobTypeError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Contact List*</label>
+                    <div class="file-upload" id="fileUpload">
+                        <input type="file" id="excelFile" name="file" accept=".xlsx,.xls" required />
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">Drop your Excel file here or click to browse</div>
+                        <div class="upload-hint">Supported formats: .xlsx, .xls</div>
+                    </div>
+                    <div class="error-message" id="fileError"></div>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Creating your campaign...</p>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">Create Campaign</button>
+            </form>
+        </div>
+
+        <script>
+            const fileUpload = document.getElementById("fileUpload");
+            const fileInput = document.getElementById("excelFile");
+
+            // Update file upload text when file is selected
+            fileInput.addEventListener("change", function (e) {
+                if (!this.files[0].name.match(/\.(xlsx|xls)$/)) {
+                    document.getElementById("fileError").textContent = "Please upload a valid Excel file";
+                    document.getElementById("fileError").style.display = "block";
+                    return;
+                } else {
+                    document.getElementById("fileError").style.display = "none";
+                }
+
+                if (this.files.length > 0) {
+                    const fileName = this.files[0].name;
+                    fileUpload.querySelector(".upload-text").textContent = `Selected: ${fileName}`;
+                }
+            });
+
+            // Handle drag and drop
+            fileUpload.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                fileUpload.style.borderColor = "var(--secondary-color)";
+                fileUpload.style.background = "rgba(50, 133, 148, 0.05)";
+            });
+
+            fileUpload.addEventListener("dragleave", () => {
+                fileUpload.style.borderColor = "var(--border-color)";
+                fileUpload.style.background = "transparent";
+            });
+
+            fileUpload.addEventListener("drop", (e) => {
+                e.preventDefault();
+                fileUpload.style.borderColor = "var(--border-color)";
+                fileUpload.style.background = "transparent";
+
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    const fileName = e.dataTransfer.files[0].name;
+                    fileUpload.querySelector(".upload-text").textContent = `Selected: ${fileName}`;
+                }
+            });
+
+            // Form submission
+            document.getElementById("campaignForm").addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                // Clear previous errors
+                document.querySelectorAll(".error-message").forEach((el) => {
+                    el.style.display = "none";
+                });
+
+                const formData = new FormData(e.target);
+
+                try {
+                    document.getElementById("loading").style.display = "block";
+                    document.getElementById("submitBtn").style.display = "none";
+
+                    const response = await fetch("/campaigns/create", {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    const data = await response.json();
+                    console.log(data);
+                    if (!data.success) {
+                        if (data.errors) {
+                            data.errors.forEach((error) => {
+                                const errorElement = document.getElementById(`${error.path}Error`);
+                                if (errorElement) {
+                                    errorElement.textContent = error.msg;
+                                    errorElement.style.display = "block";
+                                }
+                            });
+                        }
+                        return;
+                    }
+
+                    // Redirect to campaign overview
+                    // window.location.href = `/campaigns/${data.campaign.id}/overview`;
+                    window.location.href = `/campaigns`;
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Failed to create campaign. Please try again.");
+                } finally {
+                    document.getElementById("loading").style.display = "none";
+                    document.getElementById("submitBtn").style.display = "block";
+                }
+            });
+        </script>
+    </body>
+</html>

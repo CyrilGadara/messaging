@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Manage Users | Job Messenger</title>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="/css/stylesv2.css" />
+    </head>
+    <body>
+        <header class="primary-header">
+            <div class="header-container">
+                <img
+                    src="https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png"
+                    alt="247 Hire Logo"
+                    class="logo"
+                />
+                <nav>
+                    <a href="/campaigns">My Campaigns</a>
+                    <% if(user.role === 'admin') {%>
+                    <a href="/users" class="active">Users</a>
+                    <%}%>
+                    <a href="/auth/logout" class="logout-btn">Logout</a>
+                </nav>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="header-actions">
+                <h1 class="page-title">Manage Users</h1>
+                <a href="/users/create-user" class="action-button">+ Create User</a>
+            </div>
+            <div class="table-section">
+                <div class="search-section">
+                    <input type="text" class="search-box" placeholder="Search users..." id="searchInput" />
+                </div>
+                <div style="overflow-x: auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Created Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% users.forEach(user => {%>
+                            <tr>
+                                <td><%= user.username %></td>
+                                <td><%= user.email %></td>
+                                <td><span class="role-badge admin"><%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %></span></td>
+                                <td><span class="status-badge active"><%= user.status ? "Active" : "Inactive" %></span></td>
+                                <td>
+                                    <%= new Date(user.created_at).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="edit-btn" data-redirect="/users/<%= user.id %>">Edit</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <%});%>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Simple search functionality
+            const searchInput = document.getElementById("searchInput");
+            const contactRows = document.querySelectorAll(".table tbody tr");
+
+            searchInput.addEventListener("input", (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+
+                contactRows.forEach((row) => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? "" : "none";
+                });
+            });
+
+            const editBtns = document.querySelectorAll(".edit-btn");
+
+            editBtns.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const redirectURL = btn.dataset.redirect;
+                    window.location.href = redirectURL;
+                });
+            });
+        </script>
+    </body>
+</html>

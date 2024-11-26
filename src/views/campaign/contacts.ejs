@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Campaign Contacts | Job Messenger</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="/css/stylesv2.css" />
+    </head>
+    <body>
+        <header class="primary-header">
+            <div class="header-container">
+                <img
+                    src="https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png"
+                    alt="247 Hire Logo"
+                    class="logo"
+                />
+                <nav>
+                    <a href="/campaigns">My Campaigns</a>
+                    <% if(user.role === 'admin') {%>
+                    <a href="/users">Users</a>
+                    <%}%>
+                    <a href="/auth/logout" class="logout-btn">Logout</a>
+                </nav>
+            </div>
+        </header>
+
+        <nav class="secondary-header">
+            <div class="nav-container">
+                <a href="/campaigns" class="back-link">← Back to Campaigns</a>
+                <div class="nav-tabs">
+                    <a href="/campaigns/<%= campaign.id %>/overview" class="nav-link">Overview</a>
+                    <a href="/campaigns/<%= campaign.id %>/contacts" class="nav-link active">Contacts</a>
+                    <a href="/campaigns/<%= campaign.id %>/applications" class="nav-link">Applications</a>
+                    <!-- <a href="#" class="nav-link">Activities</a> -->
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="campaign-header">
+                <div class="header-content">
+                    <div>
+                        <h1 class="campaign-title"><%= campaign.job_role %> - <%= campaign.company_name %></h1>
+                        <div class="campaign-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> <%= campaign.location %></span>
+                            <span><i class="fas fa-briefcase"></i> <%= campaign.job_type %></span>
+                            <span class="status-badge <%= campaign.status %>">
+                                <%= campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1) %>
+                            </span>
+                        </div>
+                    </div>
+                    <% if (campaign.status === 'ready') { %>
+                    <button id="startCampaignBtn" class="action-button" style="padding: 0.75rem 1.5rem">Start Campaign</button>
+                    <% } %>
+                </div>
+            </div>
+            <!-- <pre>
+                <%- JSON.stringify(campaign, null, 2) %>
+                <%- JSON.stringify(contacts, null, 2) %>
+            </pre> -->
+            <div class="table-section">
+                <div class="search-section">
+                    <input type="text" class="search-box" placeholder="Search contacts..." id="searchInput" />
+                </div>
+
+                <div style="overflow-x: auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>WhatsApp Status</th>
+                                <th>SMS Status</th>
+                                <th>Email Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% contacts.forEach(contact => { %>
+                            <tr>
+                                <td><%= contact.name %></td>
+                                <td><%= contact.email || '-' %></td>
+                                <td><%= contact.phone_number || '-' %></td>
+                                <td>
+                                    <span class="status-pill <%= contact.whatsapp_status %>">
+                                        <%= contact.whatsapp_status.replace(/_/g, ' ').replace(/^./, str => str.toUpperCase()) %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-pill <%= contact.sms_status %>">
+                                        <%= contact.sms_status.replace(/_/g, ' ').replace(/^./, str => str.toUpperCase()) %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-pill <%= contact.email_status %>">
+                                        <%= contact.email_status.replace(/_/g, ' ').replace(/^./, str => str.toUpperCase()) %>
+                                    </span>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- <div class="pagination">
+                    <button class="page-button">Previous</button>
+                    <button class="page-button active">1</button>
+                    <button class="page-button">2</button>
+                    <button class="page-button">3</button>
+                    <button class="page-button">Next</button>
+                </div> -->
+            </div>
+        </div>
+
+        <script>
+            // Simple search functionality
+            const searchInput = document.getElementById("searchInput");
+            const contactRows = document.querySelectorAll(".table tbody tr");
+
+            searchInput.addEventListener("input", (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+
+                contactRows.forEach((row) => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? "" : "none";
+                });
+            });
+        </script>
+    </body>
+</html>
