@@ -87,6 +87,8 @@ const ApplicationController = {
                 message: result.body,
                 external_id: result.message,
                 message_type: "sent",
+                channel: "whatsapp",
+                status: result.status,
             });
 
             res.status(200).json({ success: true });
