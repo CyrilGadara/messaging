@@ -4,18 +4,21 @@ const ContactModel = require("../models/ContactModel");
 const CampaignModel = require("../models/CampaignModel");
 const ResponseModel = require("../models/ResponseModel");
 const MessagesModel = require("../models/MessagesModel");
-const { response } = require("express");
+const ConversationModel = require("../models/ConversationModel");
 
 const ResponseController = {
     // https://timberwolf-mastiff-9776.twil.io/demo-reply
     create: async (req, res) => {
         try {
-            const { ProfileName, Body, From, To } = req.body;
+            const { ProfileName, Body, From, To, MessageSid } = req.body;
 
             const phoneNumber = From.replace("whatsapp:+91", "");
             const contact = await ContactModel.findByPhoneNumber(phoneNumber);
             const campaign = await CampaignModel.findById(contact.campaign_id);
             const message = await MessagesModel.getLastMessageByContactId(contact.id);
+
+            // conversation
+            const conversation = await ConversationModel.getLastMessageByContactId(contact.id);
 
             const jobTitle = campaign.job_role;
             const companyName = campaign.company_name;
@@ -24,10 +27,19 @@ const ResponseController = {
             let applicationLink = "";
             let templateData = {};
 
+            await ConversationModel.create({
+                campaign_id: campaign.id,
+                contact_id: contact.id,
+                message: Body,
+                external_id: MessageSid,
+                message_type: "received",
+                channel: "whatsapp",
+            });
+
             if (["👍", "👍🏻", "👍🏼", "👍🏽", "👍🏾", "👍🏿"].includes(Body.toLowerCase())) {
                 responseTemplate = "INTERESTED_RESPONSE";
                 response_type = "interested";
-                applicationLink = `https://www.google.com`;
+                applicationLink = `http://localhost:11123/apply/${campaign.id}/${contact.id}`;
                 templateData = {
                     jobTitle: jobTitle,
                     companyName: companyName,
@@ -65,6 +77,16 @@ const ResponseController = {
                 response_type: response_type,
                 external_id: result.message,
                 campaign_id: campaign.id,
+            });
+
+            await ConversationModel.create({
+                campaign_id: campaign.id,
+                contact_id: contact.id,
+                message: result.body,
+                external_id: result.message,
+                message_type: "sent",
+                channel: "whatsapp",
+                status: "sent",
             });
 
             res.json({

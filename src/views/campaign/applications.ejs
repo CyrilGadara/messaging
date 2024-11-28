@@ -138,18 +138,18 @@
                             Thank you for sharing your details. Our recruitment team will review your information and get back to you shortly with the
                             next steps in the hiring process.
                         </p>
-                        <p class="sent" data-time="10:30 AM">Hello, how are you?</p>
-                        <p class="received" data-time="10:31 AM">I'm good, thank you! What about you?</p>
-                        <p class="sent" data-time="10:32 AM">I'm doing great, thanks for asking!</p>
-                        <p class="received" data-time="10:33 AM">That's good to hear.</p>
-                        <p class="sent" data-time="10:30 AM">Hello, how are you?</p>
-                        <p class="received" data-time="10:31 AM">I'm good, thank you! What about you?</p>
-                        <p class="sent" data-time="10:32 AM">I'm doing great, thanks for asking!</p>
-                        <p class="received" data-time="10:33 AM">That's good to hear.</p>
-                        <p class="sent" data-time="10:30 AM">Hello, how are you?</p>
-                        <p class="received" data-time="10:31 AM">I'm good, thank you! What about you?</p>
-                        <p class="sent" data-time="10:32 AM">I'm doing great, thanks for asking!</p>
-                        <p class="received" data-time="10:33 AM">That's good to hear.</p>
+                        <p class="sent" data-time="Nov 25 10:33 AM">Hello, how are you?</p>
+                        <p class="received" data-time="Nov 25 10:33 AM">I'm good, thank you! What about you?</p>
+                        <p class="sent" data-time="Nov 25 10:33 AM">I'm doing great, thanks for asking!</p>
+                        <p class="received" data-time="Nov 25 10:33 AM">That's good to hear.</p>
+                        <p class="sent" data-time="Nov 25 10:33 AM">Hello, how are you?</p>
+                        <p class="received" data-time="Nov 25 10:33 AM">I'm good, thank you! What about you?</p>
+                        <p class="sent" data-time="Nov 25 10:33 AM">I'm doing great, thanks for asking!</p>
+                        <p class="received" data-time="Nov 25 10:33 AM">That's good to hear.</p>
+                        <p class="sent" data-time="Nov 25 10:33 AM">Hello, how are you?</p>
+                        <p class="received" data-time="Nov 25 10:33 AM">I'm good, thank you! What about you?</p>
+                        <p class="sent" data-time="Nov 25 10:33 AM">I'm doing great, thanks for asking!</p>
+                        <p class="received" data-time="Nov 25 10:33 AM">That's good to hear.</p>
                         <p class="received" data-time="Nov 25 10:33 AM">This is the last message</p>
                     </div>
                     <div class="chat-footer">
@@ -170,9 +170,13 @@
 
             const sendButton = document.querySelector(".chat-footer .send-button");
             const chatInput = document.querySelector(".chat-footer .chat-input");
-
+            async function fetchMessages(contactId, campaignId) {
+                const messages = await fetch(`/conversations/api/${contactId}/${campaignId}/messages`);
+                const data = await messages.json();
+                return data;
+            }
             openChat.forEach((btn) => {
-                btn.addEventListener("click", (e) => {
+                btn.addEventListener("click", async (e) => {
                     const campaignId = btn.dataset.campaignId;
                     const contactId = btn.dataset.contactId;
                     const name = btn.dataset.name;
@@ -183,6 +187,9 @@
 
                     console.log(campaignId, contactId);
                     chatContainer.style.display = "block";
+                    const messages = await fetchMessages(contactId, campaignId);
+                    console.log(messages.messages);
+                    populateMessages(messages.messages);
                     scrollToBottom();
                 });
             });
@@ -194,6 +201,37 @@
                     chatContainer.style.display = "none";
                 }
             });
+
+            function populateMessages(messages) {
+                const chatBody = document.querySelector(".chat-body");
+
+                // Clear existing messages
+                chatBody.innerHTML = "";
+                // Iterate over the messages and append them to the chat body
+                messages.forEach((message) => {
+                    const formattedMessage = convertTextToHtml(message.message);
+                    // Determine message type (sent or received)
+                    const messageClass = message.message_type === "sent" ? "sent" : "received";
+
+                    // Format the timestamp
+                    const messageTime = new Date(message.created_at).toLocaleString("en-US", {
+                        hour: "numeric",
+                        minute: "numeric",
+                        hour12: true,
+                        day: "numeric",
+                        month: "short",
+                    });
+
+                    // Create message element
+                    const messageElement = document.createElement("p");
+                    messageElement.classList.add(messageClass);
+                    messageElement.setAttribute("data-time", messageTime);
+                    messageElement.innerHTML = formattedMessage;
+
+                    // Append message to chat body
+                    chatBody.appendChild(messageElement);
+                });
+            }
 
             // Function to convert newlines to <br> tags and make links clickable
             function convertTextToHtml(text) {

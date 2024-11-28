@@ -1091,7 +1091,7 @@ textarea {
     color: #333;
     padding: 8px 12px;
     border-radius: 4px; /* Rounded corners */
-    max-width: 70%;
+    max-width: 80%;
     font-size: 14px;
     position: relative;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
@@ -1104,7 +1104,7 @@ textarea {
     color: #333;
     padding: 8px 12px;
     border-radius: 4px; /* Rounded corners */
-    max-width: 70%;
+    max-width: 80%;
     font-size: 14px;
     position: relative;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
@@ -1116,16 +1116,17 @@ textarea {
     content: attr(data-time); /* Displays the timestamp from data-time attribute */
     position: absolute;
     top: -22px;
-    right: 5px;
+    right: 0px;
     display: block;
     font-size: 10px;
     text-align: right;
     margin-top: 5px;
     opacity: 0.6;
+    min-width: 73px;
 }
 
 .chat-body .received::after {
-    left: 5px;
+    left: 0px;
     right: auto;
 }
 

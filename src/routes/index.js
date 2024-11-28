@@ -3,6 +3,7 @@ const authRoutes = require("./authRoutes");
 const userRoutes = require("./userRoutes");
 const campaignRoutes = require("./campaignRoutes");
 const applicationRoutes = require("./applicationRoutes");
+const conversationRoutes = require("./conversationRoutes");
 
 const router = express.Router();
 
@@ -19,5 +20,6 @@ router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
 router.use("/campaigns", campaignRoutes);
 router.use("/apply", applicationRoutes);
+router.use("/conversations", conversationRoutes);
 
 module.exports = router;

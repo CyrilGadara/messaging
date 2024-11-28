@@ -6,7 +6,11 @@ const CampaignModel = require("../models/CampaignModel");
 const CampaignQueueModel = require("../models/CampaignQueueModel");
 const ContactModel = require("../models/ContactModel");
 const MessagesModel = require("../models/MessagesModel");
+
+// conversation model
+const ConversationModel = require("../models/ConversationModel");
 const logger = require("../utils/logger");
+const { Conversation } = require("twilio/lib/twiml/VoiceResponse");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -30,11 +34,20 @@ const campaignProcessingService = {
                 templateName: "JOB_OPPORTUNITY",
             });
 
+            const conversation = await ConversationModel.create({
+                campaign_id: campaign.id,
+                contact_id: contact.id,
+                message_type: "sent",
+                channel: "whatsapp",
+                status: "queued",
+            });
+
             const result = await whatsappService.sendWhatsappMessage(contact.phone_number, "JOB_OPPORTUNITY", messageParams);
 
             if (result.success) {
                 await ContactModel.updateWhatsAppStatus(contact.id, "sent");
                 await MessagesModel.updateStatus(message.id, result.message, "sent", result.body);
+                await ConversationModel.updateStatus(conversation.id, result.message, result.body, "sent");
             } else {
                 await ContactModel.updateWhatsAppStatus(contact.id, "failed");
             }
