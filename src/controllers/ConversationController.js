@@ -1,9 +1,27 @@
 const logger = require("../utils/logger");
 const ConversationModel = require("../models/ConversationModel");
+const ContactModel = require("../models/ContactModel");
+const whatsappService = require("../services/whatsappService");
 
 const ConversationController = {
     create: async (req, res) => {
         try {
+            console.log(req.params, req.body);
+            const contact = await ContactModel.findById(req.params.contactid);
+
+            const result = await whatsappService.sendChatWhatsappMessage(contact.phone_number, req.body.message);
+            console.log(result);
+            await ConversationModel.create({
+                campaign_id: req.params.campaignid,
+                contact_id: req.params.contactid,
+                message: result.body,
+                external_id: result.message,
+                message_type: "sent",
+                channel: "whatsapp",
+            });
+            return res.json({
+                success: true,
+            });
         } catch (error) {
             logger.error("Error in ConversationController.create", error);
             res.status(500).json({

@@ -160,13 +160,40 @@
             </div>
         </div>
 
+        <script src="/socket.io/socket.io.js"></script>
         <script>
+            const socket = io();
+
             const openChat = document.querySelectorAll(".open-chat");
             const chatBackdrop = document.querySelector(".chat-backdrop");
             const chatContainer = document.querySelector(".chat-container");
             const chatBody = document.querySelector(".chat-body");
             const chatName = document.querySelector(".chat-name");
             const chatPhone = document.querySelector(".chat-phone");
+
+            socket.on("receiveMessage", (message) => {
+                console.log("New message received:", message);
+
+                appendMessage(message);
+            });
+
+            function appendMessage(message) {
+                const messageElement = document.createElement("p");
+                messageElement.classList.add(message.message_type === "sent" ? "sent" : "received");
+                const messageTime = new Date(message.created_at).toLocaleString("en-US", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                    day: "numeric",
+                    month: "short",
+                });
+                messageElement.setAttribute("data-time", messageTime);
+                const formattedMessage = convertTextToHtml(message.message);
+                messageElement.innerHTML = formattedMessage;
+                console.log(formattedMessage);
+                chatBody.appendChild(messageElement);
+                console.log(messageElement);
+            }
 
             const sendButton = document.querySelector(".chat-footer .send-button");
             const chatInput = document.querySelector(".chat-footer .chat-input");
@@ -175,6 +202,7 @@
                 const data = await messages.json();
                 return data;
             }
+
             openChat.forEach((btn) => {
                 btn.addEventListener("click", async (e) => {
                     const campaignId = btn.dataset.campaignId;
@@ -187,6 +215,8 @@
 
                     console.log(campaignId, contactId);
                     chatContainer.style.display = "block";
+                    chatContainer.setAttribute("data-campaign-id", campaignId);
+                    chatContainer.setAttribute("data-contact-id", contactId);
                     const messages = await fetchMessages(contactId, campaignId);
                     console.log(messages.messages);
                     populateMessages(messages.messages);
@@ -258,7 +288,24 @@
                 return formattedText;
             }
 
-            sendButton.addEventListener("click", (e) => {
+            async function sendMessage(contactId, campaignId, message) {
+                const response = await fetch(`/conversations/api/${contactId}/${campaignId}/messages`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                    }),
+                });
+                const data = await response.json();
+                return data;
+            }
+
+            sendButton.addEventListener("click", async (e) => {
+                const campaignId = chatContainer.getAttribute("data-campaign-id");
+                const contactId = chatContainer.getAttribute("data-contact-id");
+
                 const messageText = chatInput.value.trim();
 
                 if (messageText !== "") {
@@ -268,7 +315,13 @@
                     newMessage.classList.add("sent");
                     newMessage.innerHTML = formattedMessage;
 
-                    const currentTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                    const currentTime = new Date().toLocaleString("en-US", {
+                        hour: "numeric",
+                        minute: "numeric",
+                        hour12: true,
+                        day: "numeric",
+                        month: "short",
+                    });
                     newMessage.setAttribute("data-time", currentTime);
 
                     chatBody.appendChild(newMessage);
@@ -276,6 +329,9 @@
                     chatInput.value = "";
 
                     chatInput.focus();
+
+                    const response = await sendMessage(contactId, campaignId, messageText);
+                    console.log(response);
 
                     textarea.style.height = `${originalHeight}px`;
                     textarea.style.overflow = "hidden";

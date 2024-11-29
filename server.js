@@ -7,6 +7,7 @@ const logger = require("./src/utils/logger");
 const cluster = require("cluster");
 const os = require("os");
 const processManager = require("./src/scripts/manageProcessor");
+const { initializeSocket } = require("./src/config/socket");
 
 const PORT = process.env.PORT || 3000;
 
@@ -31,6 +32,8 @@ if (cluster.isMaster && process.env.NODE_ENV === "production") {
     });
 } else {
     const server = http.createServer(app);
+
+    initializeSocket(server);
 
     async function startServer() {
         try {

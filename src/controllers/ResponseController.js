@@ -6,6 +6,8 @@ const ResponseModel = require("../models/ResponseModel");
 const MessagesModel = require("../models/MessagesModel");
 const ConversationModel = require("../models/ConversationModel");
 
+const { getIO } = require("../config/socket");
+
 const ResponseController = {
     // https://timberwolf-mastiff-9776.twil.io/demo-reply
     create: async (req, res) => {
@@ -27,7 +29,7 @@ const ResponseController = {
             let applicationLink = "";
             let templateData = {};
 
-            await ConversationModel.create({
+            const receivedConversation = await ConversationModel.create({
                 campaign_id: campaign.id,
                 contact_id: contact.id,
                 message: Body,
@@ -36,10 +38,23 @@ const ResponseController = {
                 channel: "whatsapp",
             });
 
+            console.log("===============================================");
+            console.log("now emmit receiveMessage");
+            console.log("===============================================");
+            const io = getIO();
+
+            io.emit("receiveMessage", {
+                message: Body,
+                message_type: "received",
+                contactId: contact.id,
+                campaignId: campaign.id,
+                created_at: receivedConversation.created_at,
+            });
+
             if (["👍", "👍🏻", "👍🏼", "👍🏽", "👍🏾", "👍🏿"].includes(Body.toLowerCase())) {
                 responseTemplate = "INTERESTED_RESPONSE";
                 response_type = "interested";
-                applicationLink = `http://localhost:11123/apply/${campaign.id}/${contact.id}`;
+                applicationLink = `https://7994-2409-40f0-f3-3fb9-ec7d-27a1-1555-6985.ngrok-free.app/apply/${campaign.id}/${contact.id}`;
                 templateData = {
                     jobTitle: jobTitle,
                     companyName: companyName,
@@ -79,7 +94,7 @@ const ResponseController = {
                 campaign_id: campaign.id,
             });
 
-            await ConversationModel.create({
+            const conversationResponse = await ConversationModel.create({
                 campaign_id: campaign.id,
                 contact_id: contact.id,
                 message: result.body,
