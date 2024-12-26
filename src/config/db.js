@@ -10,8 +10,8 @@ async function createConnection() {
     try {
         // await connection.raw("SET time_zone='+00:00';"); // mysql
         // logger.info("Database timezone set to UTC"); // mysql
-        await connection.raw("SET TIME ZONE 'UTC';"); // pg
-        logger.info("Database timezone set to UTC"); // pg
+        // await connection.raw("SET TIME ZONE 'UTC';"); // pg
+        // logger.info("Database timezone set to UTC"); // pg
         await connection.raw("SELECT 1");
         logger.info("Database connected successfully");
     } catch (err) {

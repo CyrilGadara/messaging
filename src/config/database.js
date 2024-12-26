@@ -1,14 +1,20 @@
 require("dotenv").config({ path: "../../.env" });
 
 const baseConfig = {
-    client: process.env.DB_CLIENT || "mysql2",
+    client: process.env.DB_CLIENT || "mssql",
     connection: {
-        host: process.env.DB_HOST,
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
+        server: process.env.DB_HOST,
         database: process.env.DB_NAME,
-        port: parseInt(process.env.DB_PORT, 10) || 3306,
-        charset: "utf8mb4",
+        port: parseInt(process.env.DB_PORT, 10) || 1433,
+        options: {
+            encrypt: false,
+            trustServerCertificate: true,
+            enableArithAbort: true,
+            // trustedConnection: true,
+            instanceName: "SQLEXPRESS",
+        },
     },
     pool: {
         min: parseInt(process.env.DB_POOL_MIN, 10) || 2,
