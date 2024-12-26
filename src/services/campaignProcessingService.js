@@ -1,3 +1,4 @@
+require("dotenv").config();
 const whatsappService = require("./whatsappService");
 const emailService = require("./emailService");
 const smsService = require("./smsService");
@@ -53,7 +54,7 @@ const campaignProcessingService = {
             }
 
             // SMS
-            const applyLink = `https://google.com`;
+            const applyLink = `${process.env.URL}/apply/${campaign.id}/${contact.id}`;
             const smsParams = {
                 name: contact.name,
                 job_role: campaign.job_role,
@@ -80,9 +81,9 @@ const campaignProcessingService = {
             }
 
             // Email
-            const yesLink = `http://localhost:11123/apply/${campaign.id}/${contact.id}`;
-            const noLink = `https://your-website.com/job-response`;
-            const unsubscribeLink = `https://your-website.com/unsubscribe`;
+            const yesLink = `${process.env.URL}/apply/${campaign.id}/${contact.id}`;
+            const noLink = `${process.env.URL}`;
+            const unsubscribeLink = `${process.env.URL}`;
             const emailParams = [
                 contact.name,
                 campaign.job_role,
@@ -160,7 +161,7 @@ const campaignProcessingService = {
     },
     startProcessing: async () => {
         try {
-            logger.info("Starting campaign processing...");
+            // logger.info("Starting campaign processing...");
 
             const queueEntry = await CampaignQueueModel.getNextQueued();
 

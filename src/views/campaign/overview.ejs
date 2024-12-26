@@ -170,6 +170,11 @@
                         // If campaign is complete, stop polling
                         if (data.stats.status === "completed" || data.stats.status === "failed") {
                             clearInterval(updateInterval);
+
+                            const statusBadge = document.querySelector(".status-badge");
+                            statusBadge.textContent = "Completed";
+                            statusBadge.classList.remove("processing");
+                            statusBadge.classList.add("completed");
                         }
                     }
                 } catch (error) {
@@ -191,6 +196,11 @@
                         const data = await response.json();
 
                         if (data.success) {
+                            const statusBadge = document.querySelector(".status-badge");
+                            statusBadge.textContent = "Processing";
+                            statusBadge.classList.remove("ready");
+                            statusBadge.classList.add("processing");
+
                             // Start polling for updates
                             updateInterval = setInterval(updateStats, 3000);
                             // Hide the button

@@ -43,7 +43,7 @@ const messagingService = {
                     if (contact.phone) {
                         if (typeof contact.phone === "object") {
                             validationErrors.push("Phone number contains an invalid format");
-                        } else if (!String(contact.phone).match(/^[6-9]\d{9}$/)) {
+                        } else if (!String(contact.phone).match(/^[1-9]\d{9}$/)) {
                             validationErrors.push("Invalid phone number");
                         }
                     }
@@ -53,6 +53,9 @@ const messagingService = {
                     } else {
                         invalidRows.push({ rowNumber, data: contact, errors: validationErrors });
                     }
+
+                    console.log(contacts);
+                    console.log(invalidRows);
                 }
             });
 

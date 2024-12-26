@@ -68,6 +68,7 @@
                     <table class="table">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
@@ -75,20 +76,11 @@
                                 <th>Expected Salary</th>
                                 <th>Notice Period</th>
                                 <th>Additional Details</th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <% applications.forEach(application => { %>
                             <tr>
-                                <td><%= application.name %></td>
-                                <td><%= application.email || '-' %></td>
-                                <td><%= application.phone_number || '-' %></td>
-
-                                <td><%= application.job_status || '-' %></td>
-                                <td>₹<%= application.expected_salary || '-' %></td>
-                                <td><%= application.notice_period || '-' %></td>
-                                <td><%= application.additional_details || '-' %></td>
                                 <td>
                                     <button
                                         class="open-chat"
@@ -106,6 +98,15 @@
                                         </svg>
                                     </button>
                                 </td>
+                                <td><%= application.name %></td>
+                                <td><%= application.email || '-' %></td>
+                                <td><%= application.phone_number || '-' %></td>
+
+                                <td><%= application.job_status || '-' %></td>
+                                <td>₹<%= application.expected_salary || '-' %></td>
+                                <td><%= application.notice_period || '-' %></td>
+                                <td><%= application.additional_details || '-' %></td>
+
                                 <!-- <td>
                                     <%= new Date(application.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'
                                     }) %>

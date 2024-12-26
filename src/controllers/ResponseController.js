@@ -1,3 +1,4 @@
+require("dotenv").config();
 const logger = require("../utils/logger");
 const whatsappService = require("../services/whatsappService");
 const ContactModel = require("../models/ContactModel");
@@ -54,7 +55,7 @@ const ResponseController = {
             if (["👍", "👍🏻", "👍🏼", "👍🏽", "👍🏾", "👍🏿"].includes(Body.toLowerCase())) {
                 responseTemplate = "INTERESTED_RESPONSE";
                 response_type = "interested";
-                applicationLink = `https://7994-2409-40f0-f3-3fb9-ec7d-27a1-1555-6985.ngrok-free.app/apply/${campaign.id}/${contact.id}`;
+                applicationLink = `${process.env.URL}/apply/${campaign.id}/${contact.id}`;
                 templateData = {
                     jobTitle: jobTitle,
                     companyName: companyName,
