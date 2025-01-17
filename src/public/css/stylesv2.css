@@ -546,7 +546,8 @@ body {
     color: #92400e;
 }
 
-.status-pill.failed {
+.status-pill.failed,
+.status-pill.unsubscribed {
     background: #fee2e2;
     color: #991b1b;
 }
@@ -1126,7 +1127,7 @@ textarea {
 }
 
 .chat-body .received::after {
-    left: 0px;
+    left: -15px;
     right: auto;
 }
 

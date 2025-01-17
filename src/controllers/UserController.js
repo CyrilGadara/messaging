@@ -238,7 +238,7 @@ const UserController = {
                 status,
             };
 
-            updateData.status = status === "active" ? true : false;
+            updateData.status = status === "active" ? 1 : 0;
 
             // If a new password is provided, hash it
             if (newPassword) {

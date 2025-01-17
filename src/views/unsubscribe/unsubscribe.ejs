@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Unsubscribe| Job Messenger</title>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="/css/stylesv2.css" />
+    </head>
+    <body>
+        <script>
+            const path = window.location.pathname;
+
+            const segments = path.split("/");
+            const campaignid = segments[2];
+            const contactid = segments[3];
+
+            fetch(`/unsubscribe/${campaignid}/${contactid}/status`)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    // if (data.success) {
+                    //     if (data.unsubscribed) {
+                    //         window.location.href = "/application/thank-you";
+                    //     } else {
+                    //         window.location.href = "/unsubscribe/" + campaignid + "/" + contactid;
+                    //     }
+                    // } else {
+                    //     alert("Error occurred while checking unsubscribe status");
+                    // }
+                })
+                .catch((error) => {
+                    console.error("Error fetching unsubscribe status:", error);
+                });
+        </script>
+        <header class="primary-header">
+            <div class="header-container" style="justify-content: center">
+                <img
+                    src="https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png"
+                    alt="247 Hire Logo"
+                    class="logo"
+                />
+            </div>
+        </header>
+        <div class="small-container">
+            <form class="form-card" id="unsubacribeForm">
+                <!-- Personalized Greeting -->
+
+                <!-- Current Job Status -->
+                <div class="form-group">
+                    <label for="unsubscribeReason">Reason (Optional)</label>
+                    <textarea id="unsubscribeReason" name="unsubscribeReason" placeholder="Enter any other important details"></textarea>
+                    <div class="error-message" id="unsubscribeReasonError"></div>
+                </div>
+
+                <!-- Resume Upload -->
+                <!-- <div class="form-group">
+                    <label for="resume">Upload Your Resume*</label>
+                    <div class="file-upload" id="resumeUpload">
+                        <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required />
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">Drop your resume here or click to browse</div>
+                        <div class="upload-hint">Supported formats: .pdf, .doc, .docx</div>
+                    </div>
+                    <div class="error-message" id="resumeError"></div>
+                </div> -->
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Unsubscribing...</p>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">Unsubscribe</button>
+            </form>
+        </div>
+
+        <script>
+            document.getElementById("unsubacribeForm").addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const path = window.location.pathname;
+
+                const segments = path.split("/");
+                const campaignid = segments[2];
+                const contactid = segments[3];
+
+                document.querySelectorAll(".error-message").forEach((el) => {
+                    el.style.display = "none";
+                });
+
+                const formData = new FormData(e.target);
+
+                try {
+                    document.getElementById("loading").style.display = "block";
+                    document.getElementById("submitBtn").style.display = "none";
+
+                    const response = await fetch(`/unsubscribe/${campaignid}/${contactid}`, {
+                        method: "POST",
+                        body: JSON.stringify(Object.fromEntries(formData)),
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+
+                    const data = await response.json();
+                    console.log(data);
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong. Please try again later.");
+                } finally {
+                    document.getElementById("loading").style.display = "none";
+                    document.getElementById("submitBtn").style.display = "block";
+                }
+            });
+        </script>
+    </body>
+</html>

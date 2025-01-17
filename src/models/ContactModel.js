@@ -20,6 +20,8 @@ const ContactModel = {
                     email: contact.email,
                     phone_number: contact.phone,
                     whatsapp_status: "not_sent",
+                    sms_status: "not_sent",
+                    email_status: "not_sent",
                     created_at: db.fn.now(),
                     updated_at: db.fn.now(),
                 }));
