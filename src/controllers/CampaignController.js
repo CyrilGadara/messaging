@@ -84,7 +84,7 @@ const CampaignController = {
     getCampaignStats: async (req, res) => {
         try {
             const stats = await CampaignModel.getStats(req.params.id);
-
+            // console.log(stats, null, 2);
             if (!stats) {
                 return res.status(404).json({
                     success: false,

@@ -59,14 +59,17 @@ const CampaignModel = {
                         COUNT(CASE WHEN whatsapp_status = 'sent' THEN 1 END) as whatsapp_sent,
                         COUNT(CASE WHEN whatsapp_status = 'not_sent' THEN 1 END) as whatsapp_pending,
                         COUNT(CASE WHEN whatsapp_status = 'failed' THEN 1 END) as whatsapp_failed,
+                        COUNT(CASE WHEN whatsapp_status = 'unsubscribed' THEN 1 END) as whatsapp_unsubscribed,
                         
                         COUNT(CASE WHEN email_status = 'sent' THEN 1 END) as email_sent,
                         COUNT(CASE WHEN email_status = 'not_sent' THEN 1 END) as email_pending,
                         COUNT(CASE WHEN email_status = 'failed' THEN 1 END) as email_failed,
+                        COUNT(CASE WHEN email_status = 'unsubscribed' THEN 1 END) as email_unsubscribed,
                         
                         COUNT(CASE WHEN sms_status = 'sent' THEN 1 END) as sms_sent,
                         COUNT(CASE WHEN sms_status = 'not_sent' THEN 1 END) as sms_pending,
-                        COUNT(CASE WHEN sms_status = 'failed' THEN 1 END) as sms_failed
+                        COUNT(CASE WHEN sms_status = 'failed' THEN 1 END) as sms_failed,
+                        COUNT(CASE WHEN sms_status = 'unsubscribed' THEN 1 END) as sms_unsubscribed
                     `)
                 )
                 .first();
@@ -90,9 +93,34 @@ const CampaignModel = {
 
             const campaigns = await db("job_campaigns")
                 .where({ user_id: userId })
-                .select("job_campaigns.*", db.raw("COUNT(contacts.id) as total_records"))
+                .select(
+                    "job_campaigns.id",
+                    "job_campaigns.user_id",
+                    "job_campaigns.job_role",
+                    "job_campaigns.location",
+                    "job_campaigns.job_type",
+                    "job_campaigns.company_name",
+                    "job_campaigns.processed_records",
+                    "job_campaigns.error_logs",
+                    "job_campaigns.created_at",
+                    "job_campaigns.updated_at",
+                    "job_campaigns.status",
+                    db.raw("COUNT(contacts.id) as total_records")
+                )
                 .leftJoin("contacts", "job_campaigns.id", "contacts.campaign_id")
-                .groupBy("job_campaigns.id")
+                .groupBy(
+                    "job_campaigns.id",
+                    "job_campaigns.user_id",
+                    "job_campaigns.job_role",
+                    "job_campaigns.location",
+                    "job_campaigns.job_type",
+                    "job_campaigns.company_name",
+                    "job_campaigns.processed_records",
+                    "job_campaigns.error_logs",
+                    "job_campaigns.created_at",
+                    "job_campaigns.updated_at",
+                    "job_campaigns.status"
+                )
                 .orderBy("job_campaigns.created_at", "desc");
 
             return campaigns;

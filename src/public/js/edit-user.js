@@ -89,7 +89,7 @@ form.addEventListener("submit", async (e) => {
         loading.style.display = "block";
         formActions.style.display = "none";
 
-        const response = await fetch(`/auth/users/${userId}`, {
+        const response = await fetch(`/users/${userId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

@@ -2,7 +2,7 @@ require("dotenv").config();
 const whatsappService = require("./whatsappService");
 const emailService = require("./emailService");
 const smsService = require("./smsService");
-const messagingConfig = require("../config/messagingConfig");
+
 const CampaignModel = require("../models/CampaignModel");
 const CampaignQueueModel = require("../models/CampaignQueueModel");
 const ContactModel = require("../models/ContactModel");
@@ -11,13 +11,22 @@ const MessagesModel = require("../models/MessagesModel");
 // conversation model
 const ConversationModel = require("../models/ConversationModel");
 const logger = require("../utils/logger");
-const { Conversation } = require("twilio/lib/twiml/VoiceResponse");
+const UnsubscribeModel = require("../models/UnsubscribeModel");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const campaignProcessingService = {
     processContact: async (contact, campaign) => {
         try {
+            const isUnsubscribed = await UnsubscribeModel.isUnsibscribed(contact.email, contact.phone_number);
+            if (isUnsubscribed) {
+                logger.info(`Contact ${contact.id} is unsubscribed`);
+                await ContactModel.updateWhatsAppStatus(contact.id, "unsubscribed");
+                await ContactModel.updateSMSStatus(contact.id, "unsubscribed");
+                await ContactModel.updateEmailStatus(contact.id, "unsubscribed");
+                await CampaignModel.incrementProcessedCount(campaign.id);
+                return;
+            }
             // Whatsapp
             const messageParams = {
                 1: contact.name,

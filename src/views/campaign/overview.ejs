@@ -69,7 +69,7 @@
                     ></div>
                 </div>
                 <p class="progress-text-container">
-                    <span id="progressText"> <%= campaign.Processed_records %> / <%= campaign.total_records %> messages sent </span>
+                    <span id="progressText"> <%= campaign.processed_records || 0 %> / <%= campaign.total_records %> messages sent </span>
                 </p>
             </div>
 
@@ -86,6 +86,10 @@
                 <div class="stat-card danger">
                     <div class="stat-label">Failed</div>
                     <div class="stat-value" id="whatsappFailedCount">0</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">Unsubscribed</div>
+                    <div class="stat-value" id="whatsappUnsubscribedCount">0</div>
                 </div>
                 <!-- <div class="stat-card info">
                     <div class="stat-label">Responses Received</div>
@@ -107,6 +111,10 @@
                     <div class="stat-label">Failed</div>
                     <div class="stat-value" id="smsFailedCount">0</div>
                 </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">Unsubscribed</div>
+                    <div class="stat-value" id="smsUnsubscribedCount">0</div>
+                </div>
                 <!-- <div class="stat-card info">
                     <div class="stat-label">Responses Received</div>
                     <div class="stat-value" id="responseCount">45</div>
@@ -127,6 +135,10 @@
                     <div class="stat-label">Failed</div>
                     <div class="stat-value" id="emailFailedCount">0</div>
                 </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">Unsubscribed</div>
+                    <div class="stat-value" id="emailUnsubscribedCount">0</div>
+                </div>
                 <!-- <div class="stat-card info">
                     <div class="stat-label">Responses Received</div>
                     <div class="stat-value" id="responseCount">45</div>
@@ -142,30 +154,34 @@
                 try {
                     const response = await fetch(`/campaigns/api/${campaignId}/stats`);
                     const data = await response.json();
-
+                    console.log(data);
                     if (data.success) {
                         // Update progress
-                        const progress = (data.stats.processed_count / data.stats.total_recipients) * 100;
+                        const progress = (data.stats.processed_records / data.stats.total_recipients) * 100;
+
                         document.getElementById("progressBar").style.width = `${progress}%`;
                         document.getElementById(
                             "progressText"
-                        ).textContent = `${data.stats.processed_count} / ${data.stats.total_recipients} messages sent`;
+                        ).textContent = `${data.stats.processed_records} / ${data.stats.total_recipients} messages sent`;
 
                         // Update stats whatsapp
                         document.getElementById("whatsappSentCount").textContent = data.stats.messageCounts.whatsapp_sent || 0;
                         document.getElementById("whatsappPendingCount").textContent = data.stats.messageCounts.whatsapp_pending || 0;
                         document.getElementById("whatsappFailedCount").textContent = data.stats.messageCounts.whatsapp_failed || 0;
+                        document.getElementById("whatsappUnsubscribedCount").textContent = data.stats.messageCounts.whatsapp_unsubscribed || 0;
                         // document.getElementById("responseCount").textContent = data.stats.messageCounts.responded || 0;
 
                         // Update stats sms
                         document.getElementById("smsSentCount").textContent = data.stats.messageCounts.sms_sent;
                         document.getElementById("smsPendingCount").textContent = data.stats.messageCounts.sms_pending;
                         document.getElementById("smsFailedCount").textContent = data.stats.messageCounts.sms_failed;
+                        document.getElementById("smsUnsubscribedCount").textContent = data.stats.messageCounts.sms_unsubscribed;
 
                         // Update status email
                         document.getElementById("emailSentCount").textContent = data.stats.messageCounts.email_sent;
                         document.getElementById("emailPendingCount").textContent = data.stats.messageCounts.email_pending;
                         document.getElementById("emailFailedCount").textContent = data.stats.messageCounts.email_failed;
+                        document.getElementById("emailUnsubscribedCount").textContent = data.stats.messageCounts.email_unsubscribed;
 
                         // If campaign is complete, stop polling
                         if (data.stats.status === "completed" || data.stats.status === "failed") {

@@ -36,7 +36,7 @@
                     <h3><%= campaign.job_role %> - <%= campaign.company_name %></h3>
                     <p class="campaign-details"><%= campaign.location %> • <%= campaign.job_type %></p>
                     <p class="campaign-details">
-                        <%= campaign.total_records %> contacts • Progress: <%= campaign.Processed_records %>/<%= campaign.total_records %> sent
+                        <%= campaign.total_records %> contacts • Progress: <%= campaign.processed_records %>/<%= campaign.total_records %> sent
                     </p>
                     <span class="status-badge <%= campaign.status %>">
                         <%= campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1) %>
