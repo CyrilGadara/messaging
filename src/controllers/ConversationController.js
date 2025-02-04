@@ -2,11 +2,19 @@ const logger = require("../utils/logger");
 const ConversationModel = require("../models/ConversationModel");
 const ContactModel = require("../models/ContactModel");
 const whatsappService = require("../services/whatsappService");
+const Filter = require("bad-words");
 
+const filter = new Filter();
 const ConversationController = {
     create: async (req, res) => {
         try {
             console.log(req.params, req.body);
+
+            // Check for profanity
+            if (filter.isProfane(req.body.message)) {
+                return res.json({ success: false, message: "Message contains inappropriate language", words: filter.list });
+            }
+
             const contact = await ContactModel.findById(req.params.contactid);
 
             const result = await whatsappService.sendChatWhatsappMessage(contact.phone_number, req.body.message);

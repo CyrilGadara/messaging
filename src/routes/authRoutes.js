@@ -28,6 +28,12 @@ router.post(
             .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/)
             .withMessage("Password must include one lowercase letter, one uppercase letter, one number, and one special character"),
         body("role").notEmpty().withMessage("User role is required").isIn(["admin", "user"]).withMessage("Role must be either 'admin' or 'user'"),
+        body("companyName")
+            .notEmpty()
+            .withMessage("Company name is required")
+            .isIn(["247Hire", "HudsonRPO"])
+            .withMessage("Company name must be either '247Hire' or 'HudsonRPO'"),
+        body("companyLogo").notEmpty().withMessage("Company logo URL is required").isURL().withMessage("Invalid URL"),
     ],
     UserController.register
 );

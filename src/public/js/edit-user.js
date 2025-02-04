@@ -12,6 +12,18 @@ console.log(modalErrorMessage);
 const cancelBtn = document.querySelector("#cancelBtn");
 const confirmDeleteBtn = document.querySelector("#confirmDeleteBtn");
 const usernameInput = document.querySelector("#usernameInput");
+const companyNameSelect = document.querySelector("#companyName");
+const companyLogo = document.querySelector("#companyLogo");
+console.log(companyNameSelect);
+companyNameSelect.addEventListener("change", () => {
+    console.log(companyNameSelect.value);
+    if (companyNameSelect.value === "247Hire") {
+        companyLogo.value = "https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png";
+    } else {
+        companyLogo.value = "https://www.hudsonrpo.com/wp-content/uploads/2021/06/logo.svg";
+    }
+    console.log(companyLogo);
+});
 
 deleteUserBtn.addEventListener("click", () => {
     modal.style.display = "flex";

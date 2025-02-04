@@ -5,7 +5,7 @@ const campaignRoutes = require("./campaignRoutes");
 const applicationRoutes = require("./applicationRoutes");
 const conversationRoutes = require("./conversationRoutes");
 const unsubscribeRoutes = require("./unsubscribeRoutes");
-
+const notificationRoutes = require("./notificationRoutes");
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -23,5 +23,6 @@ router.use("/campaigns", campaignRoutes);
 router.use("/apply", applicationRoutes);
 router.use("/conversations", conversationRoutes);
 router.use("/unsubscribe", unsubscribeRoutes);
+router.use("/notifications", notificationRoutes);
 
 module.exports = router;

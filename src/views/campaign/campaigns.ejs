@@ -9,13 +9,10 @@
     <body>
         <header class="primary-header">
             <div class="header-container">
-                <img
-                    src="https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png"
-                    alt="247 Hire Logo"
-                    class="logo"
-                />
+                <img src="<%= user.companyLogo%>" alt="247 Hire Logo" class="logo" />
                 <nav>
                     <a href="/campaigns" class="active">My Campaigns</a>
+                    <a href="/notifications">Notifications <span class="badge">100</span></a>
                     <% if(user.role === 'admin') {%>
                     <a href="/users">Users</a>
                     <%}%>
@@ -29,7 +26,6 @@
                 <h1 class="page-title">My Campaigns</h1>
                 <a href="/campaigns/create-campaign" class="action-button">+ Create New Campaign</a>
             </div>
-
             <% if (campaigns.length > 0) { %> <% campaigns.forEach(campaign => { %>
             <div class="campaign-card">
                 <div class="campaign-info">

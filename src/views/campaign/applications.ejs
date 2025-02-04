@@ -17,6 +17,7 @@
                 />
                 <nav>
                     <a href="/campaigns">My Campaigns</a>
+                    <a href="/notifications">Notifications <span class="badge">100</span></a>
                     <% if(user.role === 'admin') {%>
                     <a href="/users">Users</a>
                     <%}%>
@@ -333,6 +334,10 @@
 
                     const response = await sendMessage(contactId, campaignId, messageText);
                     console.log(response);
+                    if (!response.success) {
+                        chatBody.removeChild(newMessage);
+                        alert(response.message);
+                    }
 
                     textarea.style.height = `${originalHeight}px`;
                     textarea.style.overflow = "hidden";

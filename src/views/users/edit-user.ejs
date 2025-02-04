@@ -10,13 +10,19 @@
     <body>
         <header class="primary-header">
             <div class="header-container">
-                <img
+                <!-- <img
                     src="https://247hire.com/wp-content/uploads/2023/07/logo_a0ea2eb2c8590c90c6479fe99b274ed6_1x-1.png"
+                    alt="247 Hire Logo"
+                    class="logo"
+                /> -->
+                <img
+                    src="<%= user.companyLogo %>"
                     alt="247 Hire Logo"
                     class="logo"
                 />
                 <nav>
                     <a href="/campaigns">My Campaigns</a>
+                    <a href="/notifications">Notifications <span class="badge">100</span></a>
                     <% if(user.role === 'admin') {%>
                     <a href="/users">Users</a>
                     <%}%>
@@ -25,9 +31,9 @@
             </div>
         </header>
     
+        
         <div class="small-container">
             <a href="/users" class="back-link">← Back to Users</a>
-
             <form class="form-card" id="editUserForm" data-user-id="<%= userData.id %>" data-user-name="<%= userData.username %>">
                 <h1 class="page-title" style="margin-bottom: 0.5rem">Edit User</h1>
                 <p class="page-subtitle">Update user information and permissions</p>
@@ -48,6 +54,27 @@
                             <input type="email" id="email" name="email" value="<%= userData.email %>" required />
                             <p class="input-hint">User will use this email to login</p>
                             <div class="error-message" id="emailError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2 class="section-title">Company Information</h2>
+                        <div class="form-group">
+                            <label for="companyName">Company Name*</label>
+             
+                            <select id="companyName" name="companyName" required>
+                                <option value="" disabled>Select a Company</option>
+                                <option value="247Hire" <%= userData.company_name === '247Hire' ? 'selected' : '' %>>247Hire</option>
+                                <option value="HudsonRPO" <%= userData.company_name === 'HudsonRPO' ? 'selected' : '' %>>HudsonRPO</option>
+                            </select>
+                            <div class="error-message" id="companyNameError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="companyLogo">Company Logo URL*</label>
+                            <input type="companyLogo" id="companyLogo" name="companyLogo" value="<%= userData.company_logo %>" required readonly />
+                            <p class="input-hint">The logo URL will automatically populate based on the selected company name.</p>
+                            <div class="error-message" id="companyLogoError"></div>
                         </div>
                     </div>
 

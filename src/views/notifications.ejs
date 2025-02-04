@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Notifications</title>
+        <link rel="stylesheet" href="/css/stylesv2.css" />
+    </head>
+    <body>
+        <header class="primary-header">
+            <div class="header-container">
+                <img src="<%= user.companyLogo%>" alt="247 Hire Logo" class="logo" />
+                <nav>
+                    <a href="/campaigns">My Campaigns</a>
+                    <a href="/notifications" class="active">Notifications <span class="badge">100</span></a>
+                    <% if(user.role === 'admin') {%>
+                    <a href="/users">Users</a>
+                    <%}%>
+                    <a href="/auth/logout" class="logout-btn">Logout</a>
+                </nav>
+            </div>
+        </header>
+
+        <div class="notifications-container">
+            <div class="notifications-header">
+                <h2>Notifications</h2>
+            </div>
+
+            <a href="/campaigns/74A0AB15-055B-4816-8FD0-10B5CE2ED8B9/applications" style="text-decoration: none; color: inherit">
+                <div class="notification-item unread">
+                    <div class="notification-content">
+                        <div class="notification-title">John Doe • Summer Marketing Initiative</div>
+                        <div class="message-count">3 new messages</div>
+                    </div>
+                    <div class="notification-time">2 min ago</div>
+                </div>
+            </a>
+
+            <a href="/campaigns/7D460183-15AD-41D4-ACA8-82E244E65D6B/applications" style="text-decoration: none; color: inherit">
+                <div class="notification-item">
+                    <div class="notification-content">
+                        <div class="notification-title">Sarah Smith • Winter Product Promotion</div>
+                        <div class="message-count">2 messages</div>
+                    </div>
+                    <div class="notification-time">1 hour ago</div>
+                </div>
+            </a>
+
+            <a href="/campaigns/FFDE8D63-D2C1-4870-BF78-8238376FD413/applications" style="text-decoration: none; color: inherit">
+                <div class="notification-item">
+                    <div class="notification-content">
+                        <div class="notification-title">Mike Johnson • Spring Fashion Line</div>
+                        <div class="message-count">5 messages</div>
+                    </div>
+                    <div class="notification-time">Yesterday</div>
+                </div>
+            </a>
+        </div>
+    </body>
+</html>

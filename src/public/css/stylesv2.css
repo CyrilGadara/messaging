@@ -64,6 +64,17 @@ body {
     font-weight: 500 !important;
     position: relative;
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.header-container nav a:not(.logout-btn) .badge {
+    background: var(--primary-color);
+    font-size: 11px;
+    padding: 4px 8px;
+    color: #fff;
+    border-radius: 10px;
 }
 
 /* Default style for the dot (hidden initially) */
@@ -678,6 +689,18 @@ textarea:focus {
     box-shadow: 0 0 0 2px rgba(50, 133, 148, 0.1);
 }
 
+input[readonly] {
+    color: gray;
+    background: #e5e5e5;
+    cursor: not-allowed;
+}
+
+input[readonly]:focus {
+    outline: none;
+    border: 1px solid gray;
+    box-shadow: none;
+}
+
 select {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
     background-position: right 0.5rem center;
@@ -1185,4 +1208,55 @@ textarea {
 .chat-body::-webkit-scrollbar-thumb {
     background-color: #ccc;
     border-radius: 3px;
+}
+
+/* Notifications */
+.notifications-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 2rem auto;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+.notifications-header {
+    background-color: #fff;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+.notifications-header h2 {
+    color: #333;
+    font-size: 18px;
+    font-weight: 600;
+}
+.notification-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+.notification-item:hover {
+    background-color: #f8f9fa;
+}
+.notification-content {
+    flex-grow: 1;
+}
+.notification-title {
+    font-size: 15px;
+    color: #212529;
+    margin-bottom: 5px;
+}
+.message-count {
+    font-size: 13px;
+    color: #339af0;
+    margin-top: 3px;
+}
+.notification-time {
+    font-size: 12px;
+    color: #adb5bd;
+    margin-left: 10px;
+    text-align: right;
 }

@@ -20,7 +20,7 @@ const UserController = {
                 });
             }
 
-            const { username, email, password, role } = req.body;
+            const { username, email, password, role, companyName, companyLogo } = req.body;
             let errorArray = [];
 
             const existingUsername = await UserModel.findByUsername(username);
@@ -52,7 +52,7 @@ const UserController = {
                     errors: errorArray,
                 });
             }
-            const newUser = await UserModel.create({ username, email, password, role });
+            const newUser = await UserModel.create({ username, email, password, role, company_logo: companyLogo, company_name: companyName });
 
             logger.info(`New user registred: ${newUser.id}`);
 
@@ -122,7 +122,11 @@ const UserController = {
                 });
             }
 
-            const token = jwt.sign({ userId: user.id, userName: user.username, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: "1h" });
+            const token = jwt.sign(
+                { userId: user.id, userName: user.username, email: user.email, role: user.role, companyLogo: user.company_logo },
+                JWT_SECRET,
+                { expiresIn: "1h" }
+            );
 
             res.cookie("token", token, {
                 httpOnly: true,
@@ -225,9 +229,11 @@ const UserController = {
                     errors: errors.array(),
                 });
             }
-
+            console.log("----------------------------------");
+            console.log(req.body, null, 2);
+            console.log("----------------------------------");
             // Get the user ID and form data
-            const { name, email, role, status, newPassword } = req.body;
+            const { name, email, role, status, newPassword, companyName, companyLogo } = req.body;
             const userId = req.params.id;
 
             // Prepare the data for updating
@@ -236,6 +242,8 @@ const UserController = {
                 email,
                 role,
                 status,
+                company_name: companyName,
+                company_logo: companyLogo,
             };
 
             updateData.status = status === "active" ? 1 : 0;

@@ -82,7 +82,7 @@ const UserModel = {
         let db;
         try {
             db = await getConnection();
-            const user = await db("users").select("id", "username", "email", "role", "status").where({ id }).first();
+            const user = await db("users").select("id", "username", "email", "role", "status", "company_name", "company_logo").where({ id }).first();
 
             if (!user) {
                 logger.info(`No user found for id: ${id}`);

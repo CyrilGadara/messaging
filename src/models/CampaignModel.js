@@ -88,6 +88,7 @@ const CampaignModel = {
 
     findByUserId: async (userId) => {
         let db;
+        console.log(userId);
         try {
             db = await getConnection();
 
